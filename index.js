@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { Client, LocalAuth } = require("whatsapp-web.js");
+const { Client } = require("whatsapp-web.js");
 const qrcodeTerminal = require("qrcode-terminal");
 
 const app = express();
@@ -22,9 +22,7 @@ app.post("/create", (req, res) => {
       res.json({ qrcode: clients[id].qrcode }).status(200).end();
     }
   } else {
-    const client = new Client({
-      authStrategy: new LocalAuth({ clientId: id }),
-    });
+    const client = new Client();
 
     console.log(`\n Iniciando o cliente: "${id}"`);
 

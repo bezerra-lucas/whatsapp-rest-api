@@ -1,7 +1,0 @@
-2023/03/06-18:04:59.605 49b4 Reusing MANIFEST D:\Projects\whatsapp-rest-server\.wwebjs_auth\session-josdasilva\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2023/03/06-18:04:59.606 49b4 Recovering log #31
-2023/03/06-18:04:59.607 49b4 Reusing old log D:\Projects\whatsapp-rest-server\.wwebjs_auth\session-josdasilva\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000031.log 
-2023/03/06-18:04:59.607 49b4 Delete type=2 #21
-2023/03/06-18:04:59.607 49b4 Delete type=2 #30
-2023/03/06-18:04:59.713 125c Manual compaction at level-0 from '\x00\x10\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x11\x00\x00\x00' @ 0 : 0; will stop at (end)
-2023/03/06-18:04:59.714 125c Manual compaction at level-1 from '\x00\x10\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x11\x00\x00\x00' @ 0 : 0; will stop at (end)
