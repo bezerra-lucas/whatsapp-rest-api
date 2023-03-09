@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcodeTerminal = require("qrcode-terminal");
@@ -5,10 +6,8 @@ const qrcodeTerminal = require("qrcode-terminal");
 const app = express();
 var cors = require("cors");
 
-port = process.env.PORT || 80;
-
 app.use(express.json());
-app.use(cors()); // Use this after the variable declaration
+app.use(cors());
 
 const clients = {};
 
@@ -72,6 +71,9 @@ app.post("/send-message", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
   console.log("Servidor iniciado");
+  console.log("Porta: " + PORT);
 });

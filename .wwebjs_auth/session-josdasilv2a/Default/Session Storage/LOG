@@ -1,2 +1,3 @@
-2023/03/06-18:05:25.909 44c0 Creating DB D:\Projects\whatsapp-rest-server\.wwebjs_auth\session-josdasilv2a\Default\Session Storage since it was missing.
-2023/03/06-18:05:26.097 44c0 Reusing MANIFEST D:\Projects\whatsapp-rest-server\.wwebjs_auth\session-josdasilv2a\Default\Session Storage/MANIFEST-000001
+2023/03/09-14:32:19.600 43e0 Reusing MANIFEST D:\Projects\whatsapp-rest-api\.wwebjs_auth\session-josdasilv2a\Default\Session Storage/MANIFEST-000001
+2023/03/09-14:32:19.600 43e0 Recovering log #3
+2023/03/09-14:32:19.600 43e0 Reusing old log D:\Projects\whatsapp-rest-api\.wwebjs_auth\session-josdasilv2a\Default\Session Storage/000003.log 
