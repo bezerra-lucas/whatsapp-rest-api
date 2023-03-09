@@ -1,0 +1,6 @@
+2023/03/06-18:04:51.120 c38 Creating DB D:\Projects\whatsapp-rest-server\.wwebjs_auth\session-josdasilva\Default\File System\Origins since it was missing.
+2023/03/06-18:04:51.278 c38 Reusing MANIFEST D:\Projects\whatsapp-rest-server\.wwebjs_auth\session-josdasilva\Default\File System\Origins/MANIFEST-000001
+2023/03/06-18:04:51.278 c38 Recovering log #3
+2023/03/06-18:04:51.278 c38 Reusing old log D:\Projects\whatsapp-rest-server\.wwebjs_auth\session-josdasilva\Default\File System\Origins/000003.log 
+2023/03/06-18:04:51.278 c38 Delete type=2 #13
+2023/03/06-18:04:51.278 c38 Delete type=2 #14
