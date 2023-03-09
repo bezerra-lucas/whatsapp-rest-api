@@ -22,7 +22,11 @@ app.post("/create", (req, res) => {
       res.json({ qrcode: clients[id].qrcode }).status(200).end();
     }
   } else {
-    const client = new Client();
+    const client = new Client({
+      puppeteer: {
+        args: ["--no-sandbox"],
+      },
+    });
 
     console.log(`\n Iniciando o cliente: "${id}"`);
 
