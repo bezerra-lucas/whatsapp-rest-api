@@ -5,6 +5,8 @@ const qrcodeTerminal = require("qrcode-terminal");
 const app = express();
 var cors = require("cors");
 
+port = process.env.PORT || 80;
+
 app.use(express.json());
 app.use(cors()); // Use this after the variable declaration
 
@@ -70,6 +72,6 @@ app.post("/send-message", async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log("Servidor iniciado na porta 3001");
+app.listen(port, () => {
+  console.log("Servidor iniciado");
 });
