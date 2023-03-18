@@ -54,7 +54,12 @@ app.post("/create", (req, res) => {
 
 app.post("/send-message", async (req, res) => {
   const id = removeNonAlphaNumeric(req.body.id);
-  const number = req.body.number;
+
+  if (!req.body.number) {
+    res.emit("error").status(404).end();
+  }
+
+  const number = removeNonAlphaNumeric(req.body.number);
   const message = req.body.message;
 
   const chatId = number + "@c.us";
