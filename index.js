@@ -2,6 +2,7 @@ const express = require("express");
 const venom = require("venom-bot");
 const socketIO = require("socket.io");
 const http = require("http");
+const cors = require("cors");
 const fs = require("fs");
 
 const tokensPath = "./tokens";
@@ -11,11 +12,17 @@ if (!fs.existsSync(tokensPath)) {
 }
 
 const tokenFolder = fs.readdirSync(tokensPath);
+
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.use(express.json());
+app.use(cors());
 
 const venomInstances = {};
 
@@ -79,7 +86,6 @@ app.post("/check-status", async (req, res) => {
 
 app.post("/create", async (req, res) => {
   const { id } = req.body;
-  res.header("Access-Control-Allow-Origin", "https://www.nexteats.com.br");
 
   if (venomInstances[id] && tokenFolder.includes(id)) {
     res.status(202).json({ status: venomInstances[id].status }).end();
