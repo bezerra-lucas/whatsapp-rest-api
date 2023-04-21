@@ -22,16 +22,17 @@ const io = socketIO(server, {
 
 app.use(express.json());
 
-const corsOptions = {
-  origin: "https://www.nexteats.com.br",
-  optionsSuccessStatus: 200,
-};
-
-app.use(cors()); // Use the CORS middleware with default settings
-app.options("*", cors(corsOptions)); // Apply the specific CORS options for preflight requests
+app.use(cors());
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://www.nexteats.com.br");
+  const allowedOrigins = [
+    "https://www.nexteats.com.br",
+    "http://localhost:3000",
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
