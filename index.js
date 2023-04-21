@@ -90,7 +90,7 @@ app.post("/create", async (req, res) => {
 
 app.post("/send-message", async (req, res) => {
   const { id, number, message } = req.body;
-  const client = venomInstances[id];
+  const client = venomInstances[id].client;
 
   if (!client) {
     await createVenomInstance(id, res);
