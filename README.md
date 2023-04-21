@@ -1,26 +1,19 @@
-# WhatsApp Rest Server
+# WhatsApp Rest Api
+## Installation in Linux Server
+### 1. Run this command to install all dependencies
 
-### Descrição:
+```console
+apt-get update && apt-get install -y ca-certificates fonts-liberation libasound2 libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 lsb-release wget xdg-utils
+```
 
-Este script cria abas em um navegador headless com diversas instâncias do WhatsApp Web um servidor REST usando a biblioteca Express.js para gerenciar as requisições HTTP e a whatsapp-web.js para gerenciar as instâncias do WhatsApp.
+### 2. Clone project from GitHub
 
-------------------------
+```console
+git clone ...
+```
 
-##### POST - /create
+### 3. Run informing the desired PORT
 
-Cria um novo client do wweb.js passando a auth strategy como "new LocalAuth". Devolve ao cliente o código QRCode para autenticação.
-
-
-Parâmetro:
- - id: string
-  
-------------------------
-
-##### POST - /send-message
-
-É utilizada para enviar uma mensagem para um contato específico no WhatsApp.
-
-Parâmetros:
-- id: identificador do cliente criado previamente pela rota "/create".
-- number: número do telefone do contato que receberá a mensagem, no formato internacional (com o código do país e o código da área, sem o sinal de "+").
-- message: mensagem que será enviada.
+```console
+PORT=3000 node index.js
+```

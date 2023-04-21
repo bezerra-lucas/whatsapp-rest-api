@@ -1,86 +1,100 @@
-require("dotenv").config();
 const express = require("express");
-const { Client } = require("whatsapp-web.js");
-const qrcodeTerminal = require("qrcode-terminal");
+const venom = require("venom-bot");
+const socketIO = require("socket.io");
+const http = require("http");
+const cors = require("cors");
 
 const app = express();
-var cors = require("cors");
+const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.use(express.json());
 app.use(cors());
 
-const clients = {};
+const venomInstances = {};
 
-function removeNonAlphaNumeric(str) {
-  return str.replace(/[^a-zA-Z0-9]/g, "");
-}
-
-app.post("/create", (req, res) => {
-  const id = removeNonAlphaNumeric(req.body.id);
-  if (clients[id]) {
-    if (clients[id].qrcode) {
-      res.json({ qrcode: clients[id].qrcode }).status(200).end();
-    }
-  } else {
-    const client = new Client({
-      puppeteer: {
-        args: ["--no-sandbox"],
-      },
-    });
-
-    console.log(`\n Iniciando o cliente: "${id}"`);
-
-    clients[id] = client;
-    clients[id].isReady = false;
-
-    clients[id].on("qr", (qrcode) => {
-      console.log(`\nQRCode recebido com sucesso para o cliente: "${id}"`);
-
-      qrcodeTerminal.generate(qrcode, { small: true });
-
-      clients[id].qrcode = qrcode;
-
-      res.json({ qrcode: qrcode }).status(200).end();
-    });
-
-    clients[id].on("ready", () => {
-      clients[id].isReady = true;
-      res.status(200).end();
-    });
-
-    clients[id].initialize();
-  }
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
 });
 
-app.post("/send-message", async (req, res) => {
-  const id = removeNonAlphaNumeric(req.body.id);
+function sendMessage(client, number, message, res) {
+  client
+    .sendText(`${number}@c.us`, message)
+    .then(() => res.sendStatus(200))
+    .catch(() => res.status(500).send("Error sending message"));
+}
 
-  if (!req.body.number) {
-    res.emit("error").status(404).end();
-  }
+async function createVenomInstance(id) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await venom.create({
+        session: id,
+        catchQR: (base64Qrimg) => {
+          io.emit("qrCode", { id, qrCode: base64Qrimg });
+        },
+        statusFind: (status) => {
+          if (status === "successChat") {
+            io.emit("status", { id, status });
+          }
+        },
+      });
 
-  const number = removeNonAlphaNumeric(req.body.number);
-  const message = req.body.message;
+      resolve(client);
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
+}
 
-  const chatId = number + "@c.us";
+app.post("/create", async (req, res) => {
+  const { id } = req.body;
 
-  if (!clients[id] || clients[id].isReady === false) {
-    res.status(404).end();
+  if (venomInstances[id]) {
+    res.status(202).json({ status: "successChat" }).end();
     return;
   }
 
-  try {
-    await clients[id].sendMessage(chatId, message);
-    res.status(200).end();
-  } catch (err) {
-    console.error(err);
-    res.emit("error").status(404).end();
+  const client = await createVenomInstance(id, res);
+  venomInstances[id] = client;
+});
+
+app.post("/send-message", async (req, res) => {
+  const { id, number, message } = req.body;
+  const client = venomInstances[id];
+
+  if (!client) {
+    const newClient = await createVenomInstance(id, res);
+    venomInstances[id] = newClient;
+    sendMessage(newClient, number, message, res);
+  } else {
+    sendMessage(client, number, message, res);
   }
 });
 
-const PORT = process.env.PORT;
+app.post("/disconnect", async (req, res) => {
+  const { id } = req.body;
+  const client = venomInstances[id];
 
-app.listen(PORT, () => {
-  console.log("Servidor iniciado");
-  console.log("Porta: " + PORT);
+  if (!client) {
+    res.status(400).send("Instance not found");
+    return;
+  }
+
+  client
+    .close()
+    .then(() => {
+      delete venomInstances[id];
+      res.status(200).send("Instance disconnected");
+    })
+    .catch((error) => {
+      res.status(500).send("Error disconnecting instance");
+    });
 });
+
+const PORT = process.env.PORT || 3535;
+server.listen(PORT, () => console.log(`Server started on port ${PORT}`));

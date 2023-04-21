@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Rest Server Test</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+      const socket = io("http://localhost:3535");
+
+      socket.on("qrCode", ({ id, qrCode }) => {
+        console.log(id, qrCode);
+        if (id === document.getElementById("instanceId").value) {
+          document.getElementById("qrCode").src = qrCode;
+        }
+      });
+    </script>
+    <style>
+      body {
+        background-color: rgb(30, 32, 34);
+        color: white;
+      }
+
+      .qrcode-wrapper {
+        padding: 20px;
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WhatsApp Rest Server Test</h1>
+
+    <section>
+      <h2>Create Instance</h2>
+      <form id="createForm">
+        <label for="instanceId">Instance ID:</label>
+        <input type="text" id="instanceId" required />
+        <button type="submit">Create Instance</button>
+      </form>
+      <h3>QR Code:</h3>
+      <div class="qrcode-wrapper">
+        <img id="qrCode" alt="QR Code" />
+      </div>
+    </section>
+
+    <section>
+      <h2>Send Message</h2>
+      <form id="sendMessageForm">
+        <label for="recipientNumber">Recipient Number:</label>
+        <input type="text" id="recipientNumber" required />
+        <label for="message">Message:</label>
+        <input type="text" id="message" required />
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+
+    <script>
+      document
+        .getElementById("createForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("instanceId").value;
+
+          const response = await fetch("http://localhost:3535/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+          });
+
+          alert(await response.text());
+        });
+
+      document
+        .getElementById("sendMessageForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("instanceId").value;
+          const number = document.getElementById("recipientNumber").value;
+          const message = document.getElementById("message").value;
+
+          const response = await fetch("/send-message", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, number, message }),
+          });
+
+          if (response.status === 200) {
+            alert("Message sent!");
+          } else {
+            alert(await response.text());
+          }
+        });
+    </script>
+  </body>
+</html>
