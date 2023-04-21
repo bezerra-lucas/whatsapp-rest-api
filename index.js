@@ -31,6 +31,7 @@ app.use(cors(corsOptions));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "https://www.nexteats.com.br");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -100,6 +101,7 @@ app.post("/check-status", async (req, res) => {
 
 app.post("/create", async (req, res) => {
   const { id } = req.body;
+  res.header("Access-Control-Allow-Origin", "https://www.nexteats.com.br");
 
   if (venomInstances[id] && tokenFolder.includes(id)) {
     res.status(202).json({ status: venomInstances[id].status }).end();
