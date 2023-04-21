@@ -4,8 +4,14 @@ const socketIO = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 const fs = require("fs");
-const tokenFolder = fs.readdirSync("./tokens");
 
+const tokensPath = "./tokens";
+
+if (!fs.existsSync(tokensPath)) {
+  fs.mkdirSync(tokensPath);
+}
+
+const tokenFolder = fs.readdirSync(tokensPath);
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
