@@ -21,7 +21,13 @@ const io = socketIO(server, {
 });
 
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: "https://www.nexteats.com.br",
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 const venomInstances = {};
 
