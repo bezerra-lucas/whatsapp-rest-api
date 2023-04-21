@@ -27,7 +27,8 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-app.use(cors(corsOptions));
+app.use(cors()); // Use the CORS middleware with default settings
+app.options("*", cors(corsOptions)); // Apply the specific CORS options for preflight requests
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "https://www.nexteats.com.br");
