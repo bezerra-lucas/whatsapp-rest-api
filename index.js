@@ -3,6 +3,8 @@ const venom = require("venom-bot");
 const socketIO = require("socket.io");
 const http = require("http");
 const cors = require("cors");
+const fs = require("fs");
+const tokenFolder = fs.readdirSync("./tokens");
 
 const app = express();
 const server = http.createServer(app);
@@ -31,17 +33,30 @@ function sendMessage(client, number, message, res) {
 async function createVenomInstance(id) {
   return new Promise(async (resolve, reject) => {
     try {
-      const client = await venom.create({
-        session: id,
-        catchQR: (base64Qrimg) => {
+      const client = await venom.create(
+        id,
+        (base64Qrimg) => {
           io.emit("qrCode", { id, qrCode: base64Qrimg });
         },
-        statusFind: (status) => {
-          if (status === "successChat") {
+        (status) => {
+          venomInstances[id] = { ...venomInstances[id], status: status };
+
+          if (venomInstances[id]) {
             io.emit("status", { id, status });
           }
         },
-      });
+        {
+          logQR: false,
+          autoClose: false,
+          disableWelcome: true,
+        }
+      );
+
+      if (!venomInstances[id]) {
+        venomInstances[id] = {};
+      }
+
+      venomInstances[id].client = client;
 
       resolve(client);
     } catch (error) {
@@ -51,16 +66,26 @@ async function createVenomInstance(id) {
   });
 }
 
-app.post("/create", async (req, res) => {
+app.post("/check-status", async (req, res) => {
   const { id } = req.body;
 
-  if (venomInstances[id]) {
-    res.status(202).json({ status: "successChat" }).end();
+  if (!venomInstances[id]) {
+    res.status(200).json({ status: "notFound" }).end();
     return;
   }
 
-  const client = await createVenomInstance(id, res);
-  venomInstances[id] = client;
+  res.status(200).json({ status: venomInstances[id].status }).end();
+});
+
+app.post("/create", async (req, res) => {
+  const { id } = req.body;
+
+  if (venomInstances[id] && tokenFolder.includes(id)) {
+    res.status(202).json({ status: venomInstances[id].status }).end();
+    return;
+  }
+
+  await createVenomInstance(id);
 });
 
 app.post("/send-message", async (req, res) => {
@@ -68,9 +93,8 @@ app.post("/send-message", async (req, res) => {
   const client = venomInstances[id];
 
   if (!client) {
-    const newClient = await createVenomInstance(id, res);
-    venomInstances[id] = newClient;
-    sendMessage(newClient, number, message, res);
+    await createVenomInstance(id, res);
+    sendMessage(venomInstances[id], number, message, res);
   } else {
     sendMessage(client, number, message, res);
   }
