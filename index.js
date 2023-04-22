@@ -14,6 +14,8 @@ if (!fs.existsSync(tokensPath)) {
 const tokenFolder = fs.readdirSync(tokensPath);
 
 const app = express();
+app.use(cors());
+
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
@@ -22,7 +24,6 @@ const io = socketIO(server, {
 });
 
 app.use(express.json());
-app.use(cors());
 
 const venomInstances = {};
 
